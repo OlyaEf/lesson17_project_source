@@ -75,6 +75,16 @@ class MovieView(Resource):
         except Exception as e:
             return str(e), 404
 
+    def post(self):
+        try:
+            req_json = request.json
+            new_movie = Movie(**req_json)
+            db.session.add(new_movie)
+            db.session.commit()
+            return '', 201
+        except Exception as e:
+            return str(e), 404
+
 
 @movies_ns.route('/<int:uid>')
 class MovieView(Resource):
@@ -127,21 +137,6 @@ class MovieView(Resource):
                 return movies_schema.dump(movies_by_dir_gen), 200
             except Exception as e:
                 return str(e), 404
-
-
-@movies_ns.route('/', methods=['POST'])
-class MovieView(Resource):
-    """
-    Добавьте реализацию методов `POST` для режиссера.
-    Добавьте реализацию методов `PUT` для режиссера.
-    Добавьте реализацию методов `DELETE` для режиссера.
-    """
-    def post(self):
-        directors = request.json
-        new_directors = Movie(**directors)
-        with db.session.begin():
-            db.session.add(new_directors)
-        return '', 201
 
 
 if __name__ == '__main__':
